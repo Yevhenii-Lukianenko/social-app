@@ -18,11 +18,19 @@ export const LoginScreen = () => {
     email: "",
     password: "",
   });
+  const [isFocused, setFocused] = useState({
+    email: false,
+    password: false,
+  });
   const [isHiddenPassword, setHiddenPassword] = useState(true);
   const navigation = useNavigation();
 
   const handleChange = (name, value) => {
     setState({ ...state, [name]: value });
+  };
+
+  const handleFocus = (name, value) => {
+    setFocused({ [name]: value });
   };
 
   const handleSubmit = () => {
@@ -47,18 +55,28 @@ export const LoginScreen = () => {
               <TextInput
                 keyboardType="email-address"
                 value={state["email"]}
-                onChangeText={(value) => handleChange("email", value)}
                 placeholder="Email"
-                style={styles.input}
+                onChangeText={(value) => handleChange("email", value)}
+                onFocus={() => handleFocus("email", true)}
+                onBlur={() => handleFocus("email", false)}
+                style={[
+                  styles.input,
+                  isFocused["email"] && styles.inputFocused,
+                ]}
               />
               <View>
                 <TextInput
                   secureTextEntry={isHiddenPassword}
                   value={state["password"]}
-                  onChangeText={(value) => handleChange("password", value)}
                   placeholder="Password"
                   maxLength={20}
-                  style={styles.input}
+                  onChangeText={(value) => handleChange("password", value)}
+                  onFocus={() => handleFocus("password", true)}
+                  onBlur={() => handleFocus("password", false)}
+                  style={[
+                    styles.input,
+                    isFocused["password"] && styles.inputFocused,
+                  ]}
                 />
                 <TouchableOpacity
                   style={styles.buttonShow}
@@ -123,6 +141,7 @@ const styles = StyleSheet.create({
     borderColor: "#E8E8E8",
     borderRadius: 10,
   },
+  inputFocused: { borderColor: "#FF6C00", backgroundColor: "#FFFFFF" },
   button: {
     justifyContent: "center",
     alignItems: "center",

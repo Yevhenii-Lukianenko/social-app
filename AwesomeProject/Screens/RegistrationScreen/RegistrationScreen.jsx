@@ -20,11 +20,20 @@ export const RegistrationScreen = () => {
     email: "",
     password: "",
   });
+  const [isFocused, setFocused] = useState({
+    name: false,
+    email: false,
+    password: false,
+  });
   const [isHiddenPassword, setHiddenPassword] = useState(true);
   const navigation = useNavigation();
 
   const handleChange = (name, value) => {
     setState({ ...state, [name]: value });
+  };
+
+  const handleFocus = (name, value) => {
+    setFocused({ [name]: value });
   };
 
   const handleSubmit = (state) => {
@@ -60,23 +69,35 @@ export const RegistrationScreen = () => {
                 value={state["name"]}
                 placeholder="Name"
                 onChangeText={(value) => handleChange("name", value)}
-                style={styles.input}
+                onFocus={() => handleFocus("name", true)}
+                onBlur={() => handleFocus("name", false)}
+                style={[styles.input, isFocused["name"] && styles.inputFocused]}
               />
               <TextInput
                 keyboardType="email-address"
                 value={state["email"]}
                 placeholder="Email"
                 onChangeText={(value) => handleChange("email", value)}
-                style={styles.input}
+                onFocus={() => handleFocus("email", true)}
+                onBlur={() => handleFocus("email", false)}
+                style={[
+                  styles.input,
+                  isFocused["email"] && styles.inputFocused,
+                ]}
               />
               <View>
                 <TextInput
                   secureTextEntry={isHiddenPassword}
                   value={state["password"]}
-                  onChangeText={(value) => handleChange("password", value)}
                   placeholder="Password"
                   maxLength={20}
-                  style={styles.input}
+                  onChangeText={(value) => handleChange("password", value)}
+                  onFocus={() => handleFocus("password", true)}
+                  onBlur={() => handleFocus("password", false)}
+                  style={[
+                    styles.input,
+                    isFocused["password"] && styles.inputFocused,
+                  ]}
                 />
                 <TouchableOpacity
                   style={styles.buttonShow}
@@ -149,6 +170,7 @@ const styles = StyleSheet.create({
     borderColor: "#E8E8E8",
     borderRadius: 10,
   },
+  inputFocused: { borderColor: "#FF6C00", backgroundColor: "#FFFFFF" },
   button: {
     justifyContent: "center",
     alignItems: "center",
