@@ -36,8 +36,10 @@ const mainTabsOptions = {
     borderBottomWidth: 1,
   },
   headerTitleAlign: "center",
-  tabBarStyle: { height: 50, paddingLeft: 50, paddingRight: 50 },
+  tabBarStyle: { height: 60, paddingTop: 9, paddingLeft: 50, paddingRight: 50 },
   tabBarShowLabel: false,
+  tabBarActiveBackgroundColor: "#FF6C00",
+  tabBarItemStyle: { borderRadius: 50, height: 40 },
 };
 
 const postsOptions = ({ navigation }) => ({
@@ -56,26 +58,13 @@ const postsOptions = ({ navigation }) => ({
   tabBarIcon: () => (
     <Image
       source={require("../../assets/icons/grid.png")}
-      style={{ width: 40, height: 40 }}
+      style={{ width: 24, height: 24 }}
     />
   ),
 });
 
 const createPostsOptions = {
-  tabBarIcon: () => (
-    <View
-      style={{
-        backgroundColor: "#FF6C00",
-        width: 70,
-        height: 40,
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 50,
-      }}
-    >
-      <Text style={{ color: "#fff", fontSize: 20 }}>+</Text>
-    </View>
-  ),
+  tabBarIcon: () => <Text style={{ fontSize: 20 }}>+</Text>,
 };
 
 const profileOptions = ({ navigation }) => ({
