@@ -40,9 +40,12 @@ const mainTabsOptions = {
   tabBarShowLabel: false,
 };
 
-const postsOptions = {
+const postsOptions = ({ navigation }) => ({
   headerRight: () => (
-    <TouchableOpacity style={{ marginRight: 16 }}>
+    <TouchableOpacity
+      style={{ marginRight: 16 }}
+      onPress={() => navigation.navigate("Login")}
+    >
       <Image
         source={require("../../assets/icons/logout.png")}
         style={{ width: 24, height: 24 }}
@@ -56,7 +59,7 @@ const postsOptions = {
       style={{ width: 40, height: 40 }}
     />
   ),
-};
+});
 
 const createPostsOptions = {
   tabBarIcon: () => (
@@ -75,9 +78,12 @@ const createPostsOptions = {
   ),
 };
 
-const profileOptions = {
+const profileOptions = ({ navigation }) => ({
   headerRight: () => (
-    <TouchableOpacity style={{ marginRight: 16 }}>
+    <TouchableOpacity
+      style={{ marginRight: 16 }}
+      onPress={() => navigation.navigate("Login")}
+    >
       <Image
         source={require("../../assets/icons/logout.png")}
         style={{ width: 24, height: 24 }}
@@ -91,4 +97,4 @@ const profileOptions = {
       style={{ width: 40, height: 40 }}
     />
   ),
-};
+});
