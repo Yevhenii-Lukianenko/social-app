@@ -1,6 +1,6 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import { TouchableOpacity, Image, View, Text } from "react-native";
+import { TouchableOpacity, Image, Text } from "react-native";
 
 import { PostsScreen } from "../PostsScreen/PostsScreen";
 import { CreatePostsScreen } from "../CreatePostsScreen/CreatePostsScreen";
@@ -35,6 +35,11 @@ const mainTabsOptions = {
   headerStyle: {
     borderBottomWidth: 1,
   },
+  headerTitleStyle: {
+    color: "#212121",
+    fontSize: 17,
+    fontWeight: 500,
+  },
   headerTitleAlign: "center",
   tabBarStyle: { height: 60, paddingTop: 9, paddingLeft: 50, paddingRight: 50 },
   tabBarShowLabel: false,
@@ -65,6 +70,8 @@ const postsOptions = ({ navigation }) => ({
 
 const createPostsOptions = {
   tabBarIcon: () => <Text style={{ fontSize: 20 }}>+</Text>,
+  tabBarStyle: { display: "none" },
+  headerShown: false,
 };
 
 const profileOptions = ({ navigation }) => ({
