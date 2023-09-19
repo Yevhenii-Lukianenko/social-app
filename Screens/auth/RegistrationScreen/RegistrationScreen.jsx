@@ -1,29 +1,58 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch, useSelector } from "react-redux";
 import isEmail from "validator/lib/isEmail";
+
 import {
-  StyleSheet,
+  Keyboard,
+  TouchableWithoutFeedback,
   KeyboardAvoidingView,
-  ImageBackground,
   View,
+  ImageBackground,
   TouchableOpacity,
   Text,
   TextInput,
-  TouchableWithoutFeedback,
-  Keyboard,
 } from "react-native";
+import { styles } from "./RegistrationScreen.styled";
+import { UserAvatar } from "../../../components/UserAvatar/UserAvatar";
 
-export const LoginScreen = () => {
+import { authSignUpUser } from "../../../redux/auth/authOperations";
+import { uploadPhotoToServer } from "../../../utils/uploadPhotoToServer";
+import { selectStateChange } from "../../../redux/auth/authSelectors";
+
+export const RegistrationScreen = () => {
   const [state, setState] = useState({
+    name: "",
     email: "",
     password: "",
   });
+  const [avatar, setAvatar] = useState(null);
   const [isFocused, setFocused] = useState({
+    name: false,
     email: false,
     password: false,
   });
   const [isHiddenPassword, setHiddenPassword] = useState(true);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+  // auto login
+  const isLogin = useSelector(selectStateChange);
+  useEffect(() => {
+    if (isLogin) {
+      navigation.navigate("Home");
+
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Home" }],
+      });
+    }
+  }, [isLogin]);
+  // auto login
+
+  const handleAvatar = (avatar) => {
+    setAvatar(avatar);
+  };
 
   const handleChange = (name, value) => {
     setState({ ...state, [name]: value });
@@ -33,25 +62,45 @@ export const LoginScreen = () => {
     setFocused({ [name]: value });
   };
 
-  const handleSubmit = () => {
-    if (isEmail(state.email) && state.password) {
-      navigation.navigate("Home");
-      return console.log(state);
+  const handleSubmit = async (state) => {
+    if (state.name && isEmail(state.email) && state.password) {
+      if (avatar) {
+        const avatarUrl = await uploadPhotoToServer(avatar, "avatarsImages");
+        await dispatch(
+          authSignUpUser({
+            ...state,
+            avatarUrl,
+          })
+        );
+      } else {
+        await dispatch(authSignUpUser({ ...state }));
+      }
+      return;
     }
-    return console.log("The email or password is incorrect");
+    return console.log("Please enter all fields correctly");
   };
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <ImageBackground
-        source={require("./../../assets/images/bgImg.jpg")}
+        source={require("../../../assets/images/bgImg.jpg")}
         resizeMode="cover"
         style={styles.backgroundImg}
       >
-        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={-230}>
-          <View style={styles.loginContainer}>
-            <Text style={styles.authTitle}>Sign in</Text>
+        <KeyboardAvoidingView behavior="position" keyboardVerticalOffset={-170}>
+          <View style={styles.registerContainer}>
+            <UserAvatar handleAvatar={handleAvatar} />
+
+            <Text style={styles.authTitle}>Registration</Text>
             <View style={styles.formContainer}>
+              <TextInput
+                value={state["name"]}
+                placeholder="Name"
+                onChangeText={(value) => handleChange("name", value)}
+                onFocus={() => handleFocus("name", true)}
+                onBlur={() => handleFocus("name", false)}
+                style={[styles.input, isFocused["name"] && styles.inputFocused]}
+              />
               <TextInput
                 keyboardType="email-address"
                 value={state["email"]}
@@ -88,17 +137,15 @@ export const LoginScreen = () => {
             </View>
 
             <TouchableOpacity
-              onPress={() => handleSubmit()}
+              onPress={() => handleSubmit(state)}
               style={styles.button}
             >
-              <Text style={styles.buttonText}>Sign in</Text>
+              <Text style={styles.buttonText}>Register</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => navigation.navigate("Registration")}
-            >
+            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
               <Text style={styles.authLink}>
-                Don't have an account? Sign up
+                Already have an account? Sign in
               </Text>
             </TouchableOpacity>
           </View>
@@ -107,56 +154,3 @@ export const LoginScreen = () => {
     </TouchableWithoutFeedback>
   );
 };
-
-const styles = StyleSheet.create({
-  backgroundImg: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  loginContainer: {
-    position: "relative",
-    alignItems: "center",
-    paddingTop: 32,
-    paddingBottom: 133,
-    width: "100%",
-    backgroundColor: "#FFFFFF",
-    borderTopLeftRadius: 25,
-    borderTopRightRadius: 25,
-  },
-  authTitle: {
-    marginBottom: 33,
-    textAlign: "center",
-    color: "#212121",
-    fontSize: 30,
-    fontWeight: 500,
-    letterSpacing: 0.3,
-  },
-  formContainer: { gap: 16 },
-  input: {
-    padding: 16,
-    width: 343,
-    height: 50,
-    backgroundColor: "#F6F6F6",
-    borderWidth: 1,
-    borderColor: "#E8E8E8",
-    borderRadius: 10,
-  },
-  inputFocused: { borderColor: "#FF6C00", backgroundColor: "#FFFFFF" },
-  button: {
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 43,
-    marginBottom: 16,
-    width: 343,
-    height: 50,
-    backgroundColor: "#FF6C00",
-    borderRadius: 100,
-    overflow: "hidden",
-  },
-  buttonText: {
-    fontSize: 16,
-    color: "#ffffff",
-  },
-  buttonShow: { position: "absolute", bottom: 15, right: 16 },
-  authLink: { color: "#1B4371", fontSize: 16 },
-});
