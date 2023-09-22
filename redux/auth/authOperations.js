@@ -52,7 +52,24 @@ export const authSignInUser =
   ({ email, password }) =>
   async (dispatch, getState) => {
     try {
-      const user = await signInWithEmailAndPassword(auth, email, password);
+      await signInWithEmailAndPassword(auth, email, password);
+
+      const {
+        uid,
+        displayName,
+        photoURL,
+        email: userEmail,
+      } = await auth.currentUser;
+
+      await dispatch(
+        authSlice.actions.updateUserProfile({
+          userId: uid,
+          nickName: displayName,
+          avatarUrl: photoURL,
+          userEmail,
+        })
+      );
+      dispatch(authSlice.actions.authStateChangeUser({ stateChange: true }));
     } catch (error) {
       console.log("error:", error);
       console.log("message:", error.message);
@@ -97,7 +114,7 @@ export const authUpdateUserAvatar =
 
       await updateProfile(user, { photoURL: avatarUrl });
 
-      const { photoURL, uid, displayName, email } = await auth.currentUser;
+      const { photoURL, uid } = await auth.currentUser;
 
       await dispatch(
         authSlice.actions.updateUserAvatar({ avatarUrl: photoURL })
